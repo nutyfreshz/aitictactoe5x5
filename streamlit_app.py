@@ -29,6 +29,7 @@ def reset_game():
     st.session_state.board = np.zeros((5, 5), dtype=int)
     st.session_state.current_player = 1
     st.session_state.winner = None
+    st.experimental_rerun()  # Force rerun immediately
 
 # Q-Learning Agent
 class QLearningAgent:
