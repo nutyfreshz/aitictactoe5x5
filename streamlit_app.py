@@ -29,7 +29,6 @@ def reset_game():
     st.session_state.board = np.zeros((5, 5), dtype=int)
     st.session_state.current_player = 1
     st.session_state.winner = None
-    st.experimental_rerun()  # Force rerun immediately
 
 # Q-Learning Agent
 class QLearningAgent:
@@ -83,7 +82,7 @@ def ai_move():
 
 # Function to train the Q-learning agent
 def train_agent():
-    for episode in range(5000):  # Increased training episodes to 5000
+    for episode in range(1000):  # Training for 1000 games
         board = np.zeros((5, 5), dtype=int)
         agent = st.session_state.q_agent
         current_player = 1
@@ -102,68 +101,35 @@ def train_agent():
             winner = check_winner(board)
 
             if winner == 1:
-                reward = 10  # Reward for winning increased to 10
+                reward = 1
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
             elif winner == 2:
-                reward = -10  # Penalty for losing increased to -10
+                reward = -1
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
             elif winner == 0:
                 reward = 0
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
-            else:
-                if current_player == 1:
-                    reward = 0.1  # Small reward for intermediate move
-                    agent.learn(state, action, reward, next_state, available_actions)
-                current_player = 3 - current_player
+            
+            if current_player == 1:
+                agent.learn(state, action, 0, next_state, available_actions)
+            current_player = 3 - current_player
 
 # Train the agent before the game starts
 train_agent()
 
-# Apply CSS for equal height and width cells
-st.markdown(
-    """
-    <style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-        width: 50vmin;
-        height: 50vmin;
-        margin: auto;
-    }
-    .grid-item {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-    }
-    .grid-item button {
-        width: 100%;
-        height: 100%;
-        font-size: 24px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Display the game board
-board_container = st.container()
-with board_container:
-    st.markdown('<div class="grid-container">', unsafe_allow_html=True)
-    for row in range(5):
-        for col in range(5):
-            key = f"{row}-{col}"
-            if st.session_state.board[row, col] == 0:
-                st.markdown(f'<div class="grid-item"><button onclick="make_move({row}, {col})"></button></div>', unsafe_allow_html=True)
-            else:
-                symbol = "X" if st.session_state.board[row, col] == 1 else "O"
-                st.markdown(f'<div class="grid-item"><button disabled>{symbol}</button></div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+for row in range(5):
+    cols = st.columns(5)
+    for col in range(5):
+        key = f"{row}-{col}"
+        if st.session_state.board[row, col] == 0:
+            cols[col].button(" ", key=key, on_click=make_move, args=(row, col))
+        else:
+            symbol = "X" if st.session_state.board[row, col] == 1 else "O"
+            cols[col].button(symbol, key=key, disabled=True)
 
 # Display game status
 if st.session_state.winner is not None:
