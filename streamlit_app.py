@@ -66,6 +66,19 @@ def make_move(row, col):
         st.session_state.winner = check_winner(st.session_state.board)
         if st.session_state.winner is None:
             st.session_state.current_player = 3 - st.session_state.current_player
+            # Now it's AI's turn
+            if st.session_state.current_player == 2:
+                ai_move()
+
+def ai_move():
+    if st.session_state.winner is None:
+        state = st.session_state.q_agent.get_state(st.session_state.board)
+        available_actions = [(r, c) for r in range(5) for c in range(5) if st.session_state.board[r, c] == 0]
+        action = st.session_state.q_agent.choose_action(state, available_actions)
+        st.session_state.board[action[0], action[1]] = st.session_state.current_player
+        st.session_state.winner = check_winner(st.session_state.board)
+        if st.session_state.winner is None:
+            st.session_state.current_player = 3 - st.session_state.current_player
 
 # Function to train the Q-learning agent
 def train_agent():
