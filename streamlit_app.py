@@ -83,7 +83,7 @@ def ai_move():
 
 # Function to train the Q-learning agent
 def train_agent():
-    for episode in range(1000):  # Training for 1000 games
+    for episode in range(5000):  # Increased training episodes to 5000
         board = np.zeros((5, 5), dtype=int)
         agent = st.session_state.q_agent
         current_player = 1
@@ -102,21 +102,22 @@ def train_agent():
             winner = check_winner(board)
 
             if winner == 1:
-                reward = 1
+                reward = 10  # Reward for winning increased to 10
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
             elif winner == 2:
-                reward = -1
+                reward = -10  # Penalty for losing increased to -10
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
             elif winner == 0:
                 reward = 0
                 agent.learn(state, action, reward, next_state, available_actions)
                 break
-            
-            if current_player == 1:
-                agent.learn(state, action, 0, next_state, available_actions)
-            current_player = 3 - current_player
+            else:
+                if current_player == 1:
+                    reward = 0.1  # Small reward for intermediate move
+                    agent.learn(state, action, reward, next_state, available_actions)
+                current_player = 3 - current_player
 
 # Train the agent before the game starts
 train_agent()
