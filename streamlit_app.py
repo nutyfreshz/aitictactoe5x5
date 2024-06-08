@@ -126,13 +126,24 @@ train_agent()
 st.markdown(
     """
     <style>
-    .block-container {
-        max-width: 800px;
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        width: 500px;
+        height: 500px;
         margin: auto;
     }
-    .stButton>button {
-        width: 60px;
-        height: 60px;
+    .grid-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+    .grid-item button {
+        width: 100%;
+        height: 100%;
         font-size: 24px;
     }
     </style>
@@ -141,15 +152,19 @@ st.markdown(
 )
 
 # Display the game board
-for row in range(5):
-    cols = st.columns(5)
-    for col in range(5):
-        key = f"{row}-{col}"
-        if st.session_state.board[row, col] == 0:
-            cols[col].button(" ", key=key, on_click=make_move, args=(row, col))
-        else:
-            symbol = "X" if st.session_state.board[row, col] == 1 else "O"
-            cols[col].button(symbol, key=key, disabled=True)
+board_container = st.container()
+with board_container:
+    for row in range(5):
+        cols = st.columns(5)
+        for col in range(5):
+            key = f"{row}-{col}"
+            if st.session_state.board[row, col] == 0:
+                with cols[col]:
+                    st.button(" ", key=key, on_click=make_move, args=(row, col))
+            else:
+                symbol = "X" if st.session_state.board[row, col] == 1 else "O"
+                with cols[col]:
+                    st.button(symbol, key=key, disabled=True)
 
 # Display game status
 if st.session_state.winner is not None:
