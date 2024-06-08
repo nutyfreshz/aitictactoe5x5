@@ -130,8 +130,8 @@ st.markdown(
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         grid-template-rows: repeat(5, 1fr);
-        width: 500px;
-        height: 500px;
+        width: 50vmin;
+        height: 50vmin;
         margin: auto;
     }
     .grid-item {
@@ -154,17 +154,16 @@ st.markdown(
 # Display the game board
 board_container = st.container()
 with board_container:
+    st.markdown('<div class="grid-container">', unsafe_allow_html=True)
     for row in range(5):
-        cols = st.columns(5)
         for col in range(5):
             key = f"{row}-{col}"
             if st.session_state.board[row, col] == 0:
-                with cols[col]:
-                    st.button(" ", key=key, on_click=make_move, args=(row, col))
+                st.markdown(f'<div class="grid-item"><button onclick="make_move({row}, {col})"></button></div>', unsafe_allow_html=True)
             else:
                 symbol = "X" if st.session_state.board[row, col] == 1 else "O"
-                with cols[col]:
-                    st.button(symbol, key=key, disabled=True)
+                st.markdown(f'<div class="grid-item"><button disabled>{symbol}</button></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Display game status
 if st.session_state.winner is not None:
