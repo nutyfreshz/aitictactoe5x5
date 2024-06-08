@@ -124,10 +124,12 @@ train_agent()
 for row in range(5):
     cols = st.columns(5)
     for col in range(5):
+        key = f"{row}-{col}"
         if st.session_state.board[row, col] == 0:
-            cols[col].button(" ", key=f"{row}-{col}", on_click=make_move, args=(row, col))
+            cols[col].button(" ", key=key, on_click=make_move, args=(row, col))
         else:
-            cols[col].button("X" if st.session_state.board[row, col] == 1 else "O", disabled=True)
+            symbol = "X" if st.session_state.board[row, col] == 1 else "O"
+            cols[col].button(symbol, key=key, disabled=True)
 
 # Display game status
 if st.session_state.winner is not None:
