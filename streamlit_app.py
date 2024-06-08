@@ -122,6 +122,24 @@ def train_agent():
 # Train the agent before the game starts
 train_agent()
 
+# Apply CSS for equal height and width cells
+st.markdown(
+    """
+    <style>
+    .block-container {
+        max-width: 800px;
+        margin: auto;
+    }
+    .stButton>button {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Display the game board
 for row in range(5):
     cols = st.columns(5)
